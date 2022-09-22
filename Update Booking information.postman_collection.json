@@ -1,0 +1,614 @@
+{
+	"info": {
+		"_postman_id": "4b9a1e45-2143-47a9-b16b-93e6cc66538f",
+		"name": "Update Booking information",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "8511854"
+	},
+	"item": [
+		{
+			"name": "Create Token",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set(\"baseUrl\", \"https://restful-booker.herokuapp.com\");"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"var data = pm.response.json()\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"token\");\r",
+							"});\r",
+							"\r",
+							"// set the token into a collection variable\r",
+							"pm.collectionVariables.set(\"token\", data.token);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\" : \"admin\",\r\n    \"password\" : \"password123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/auth",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"auth"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Booking",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"//check successful call return 200 code\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"//check reponse array length > 0\r",
+							"\r",
+							"var data = pm.response.json()\r",
+							"var dataLength = pm.response.json().length - 1;\r",
+							"var randomNumber = Math.floor(Math.random() * (dataLength-0+1)) + 0\r",
+							"//set the random number as booking ID for next Request\r",
+							"pm.collectionVariables.set(\"bookingID\", randomNumber);\r",
+							"\r",
+							"pm.test(\"Total Number of booking is > 0\", function(){\r",
+							"    pm.expect(data.length).to.be.above(0)\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Response time is less than 400ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(400);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/booking",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"booking"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update All Info - Success",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"//function to create random names(first/second)\r",
+							"\r",
+							"function random_name(length){\r",
+							"    let result = ''\r",
+							"    let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';\r",
+							"    let charactersLength = characters.length;\r",
+							"    for(let i = 0; i < length ; i++){\r",
+							"        result += characters.charAt(Math.floor(Math.random() * \r",
+							"            charactersLength));\r",
+							"        \r",
+							"    }\r",
+							"\r",
+							"    return result\r",
+							"}\r",
+							"\r",
+							"//function to create random date\r",
+							"function randomDate(start, end) {\r",
+							"    return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));\r",
+							"}\r",
+							"\r",
+							"\r",
+							"// set a random valid first name (7 character)\r",
+							"pm.collectionVariables.set(\"firstname\", random_name(7));\r",
+							"\r",
+							"// set a random valid last name (7 character)\r",
+							"pm.collectionVariables.set(\"lastname\", random_name(7));\r",
+							"\r",
+							"//set a random total price fro 1 to 100\r",
+							"pm.collectionVariables.set(\"totalprice\", Math.floor(Math.random() * 100) + 1);\r",
+							"\r",
+							"\r",
+							"//set deposit paid true or false\r",
+							"pm.collectionVariables.set(\"depositpaid\", Math.random() < 0.5);\r",
+							"\r",
+							"//set checkin date\r",
+							"var checkin = randomDate(new Date(2012, 0, 1), new Date())\r",
+							"pm.collectionVariables.set(\"checkin\", checkin.toLocaleDateString()) //converting in only date\r",
+							"\r",
+							"//set checkout date\r",
+							"var checkout = randomDate(new Date(2012, 0, 1), new Date())\r",
+							"pm.collectionVariables.set(\"checkout\", checkout.toLocaleDateString()) //converting in only date\r",
+							"\r",
+							"// set addisional needs (10 charcaters)\r",
+							"pm.collectionVariables.set(\"additionalneeds\", random_name(10));\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "token = 38814a9b2788ea3",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"firstname\" : \"{{firstname}}\",\r\n    \"lastname\" : \"{{lastname}}\",\r\n    \"totalprice\" : {{totalprice}},\r\n    \"depositpaid\" : {{depositpaid}},\r\n    \"bookingdates\" : {\r\n        \"checkin\" : \"{{checkin}}\",\r\n        \"checkout\" : \"{{checkout}}\"\r\n    },\r\n    \"additionalneeds\" : \"{{additionalneeds}}\",\r\n    \"token\": \"{{token}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/booking/{{bookingID}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"booking",
+						"{{bookingID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Missing Token field- Error",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"//function to create random names(first/second)\r",
+							"\r",
+							"function random_name(length){\r",
+							"    let result = ''\r",
+							"    let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';\r",
+							"    let charactersLength = characters.length;\r",
+							"    for(let i = 0; i < length ; i++){\r",
+							"        result += characters.charAt(Math.floor(Math.random() * \r",
+							"            charactersLength));\r",
+							"        \r",
+							"    }\r",
+							"\r",
+							"    return result\r",
+							"}\r",
+							"\r",
+							"//function to create random date\r",
+							"function randomDate(start, end) {\r",
+							"    return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));\r",
+							"}\r",
+							"\r",
+							"\r",
+							"// set a random valid first name (7 character)\r",
+							"pm.collectionVariables.set(\"firstname\", random_name(7));\r",
+							"\r",
+							"// set a random valid last name (7 character)\r",
+							"pm.collectionVariables.set(\"lastname\", random_name(7));\r",
+							"\r",
+							"//set a random total price fro 1 to 100\r",
+							"pm.collectionVariables.set(\"totalprice\", Math.floor(Math.random() * 100) + 1);\r",
+							"\r",
+							"\r",
+							"//set deposit paid true or false\r",
+							"pm.collectionVariables.set(\"depositpaid\", Math.random() < 0.5);\r",
+							"\r",
+							"//set checkin date\r",
+							"var checkin = randomDate(new Date(2012, 0, 1), new Date())\r",
+							"pm.collectionVariables.set(\"checkin\", checkin.toLocaleDateString()) //converting in only date\r",
+							"\r",
+							"//set checkout date\r",
+							"var checkout = randomDate(new Date(2012, 0, 1), new Date())\r",
+							"pm.collectionVariables.set(\"checkout\", checkout.toLocaleDateString()) //converting in only date\r",
+							"\r",
+							"// set addisional needs (10 charcaters)\r",
+							"pm.collectionVariables.set(\"additionalneeds\", random_name(10));\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 403\", function () {\r",
+							"    pm.response.to.have.status(403);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "token = 38814a9b2788ea3",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"firstname\" : \"{{firstname}}\",\r\n    \"lastname\" : \"{{lastname}}\",\r\n    \"totalprice\" : {{totalprice}},\r\n    \"depositpaid\" : {{depositpaid}},\r\n    \"bookingdates\" : {\r\n        \"checkin\" : \"{{checkin}}\",\r\n        \"checkout\" : \"{{checkout}}\"\r\n    },\r\n    \"additionalneeds\" : \"{{additionalneeds}}\"\r\n   \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/booking/{{bookingID}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"booking",
+						"{{bookingID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Token empty - Error",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"//function to create random names(first/second)\r",
+							"\r",
+							"function random_name(length){\r",
+							"    let result = ''\r",
+							"    let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';\r",
+							"    let charactersLength = characters.length;\r",
+							"    for(let i = 0; i < length ; i++){\r",
+							"        result += characters.charAt(Math.floor(Math.random() * \r",
+							"            charactersLength));\r",
+							"        \r",
+							"    }\r",
+							"\r",
+							"    return result\r",
+							"}\r",
+							"\r",
+							"//function to create random date\r",
+							"function randomDate(start, end) {\r",
+							"    return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));\r",
+							"}\r",
+							"\r",
+							"\r",
+							"// set a random valid first name (7 character)\r",
+							"pm.collectionVariables.set(\"firstname\", random_name(7));\r",
+							"\r",
+							"// set a random valid last name (7 character)\r",
+							"pm.collectionVariables.set(\"lastname\", random_name(7));\r",
+							"\r",
+							"//set a random total price fro 1 to 100\r",
+							"pm.collectionVariables.set(\"totalprice\", Math.floor(Math.random() * 100) + 1);\r",
+							"\r",
+							"\r",
+							"//set deposit paid true or false\r",
+							"pm.collectionVariables.set(\"depositpaid\", Math.random() < 0.5);\r",
+							"\r",
+							"//set checkin date\r",
+							"var checkin = randomDate(new Date(2012, 0, 1), new Date())\r",
+							"pm.collectionVariables.set(\"checkin\", checkin.toLocaleDateString()) //converting in only date\r",
+							"\r",
+							"//set checkout date\r",
+							"var checkout = randomDate(new Date(2012, 0, 1), new Date())\r",
+							"pm.collectionVariables.set(\"checkout\", checkout.toLocaleDateString()) //converting in only date\r",
+							"\r",
+							"// set addisional needs (10 charcaters)\r",
+							"pm.collectionVariables.set(\"additionalneeds\", random_name(10));\r",
+							"\r",
+							"\r",
+							"//set empty token\r",
+							"pm.collectionVariables.set(\"token\", \"\");\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 403\", function () {\r",
+							"    pm.response.to.have.status(403);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "token = 38814a9b2788ea3",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"firstname\" : \"{{firstname}}\",\r\n    \"lastname\" : \"{{lastname}}\",\r\n    \"totalprice\" : {{totalprice}},\r\n    \"depositpaid\" : {{depositpaid}},\r\n    \"bookingdates\" : {\r\n        \"checkin\" : \"{{checkin}}\",\r\n        \"checkout\" : \"{{checkout}}\"\r\n    },\r\n    \"additionalneeds\" : \"{{additionalneeds}}\",\r\n    \"token\": {{token}}\r\n   \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/booking/{{bookingID}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"booking",
+						"{{bookingID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Token - invalid - Error",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"//function to create random names(first/second)\r",
+							"\r",
+							"function random_name(length){\r",
+							"    let result = ''\r",
+							"    let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';\r",
+							"    let charactersLength = characters.length;\r",
+							"    for(let i = 0; i < length ; i++){\r",
+							"        result += characters.charAt(Math.floor(Math.random() * \r",
+							"            charactersLength));\r",
+							"        \r",
+							"    }\r",
+							"\r",
+							"    return result\r",
+							"}\r",
+							"\r",
+							"//function to create random date\r",
+							"function randomDate(start, end) {\r",
+							"    return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));\r",
+							"}\r",
+							"\r",
+							"\r",
+							"// set a random valid first name (7 character)\r",
+							"pm.collectionVariables.set(\"firstname\", random_name(7));\r",
+							"\r",
+							"// set a random valid last name (7 character)\r",
+							"pm.collectionVariables.set(\"lastname\", random_name(7));\r",
+							"\r",
+							"//set a random total price fro 1 to 100\r",
+							"pm.collectionVariables.set(\"totalprice\", Math.floor(Math.random() * 100) + 1);\r",
+							"\r",
+							"\r",
+							"//set deposit paid true or false\r",
+							"pm.collectionVariables.set(\"depositpaid\", Math.random() < 0.5);\r",
+							"\r",
+							"//set checkin date\r",
+							"var checkin = randomDate(new Date(2012, 0, 1), new Date())\r",
+							"pm.collectionVariables.set(\"checkin\", checkin.toLocaleDateString()) //converting in only date\r",
+							"\r",
+							"//set checkout date\r",
+							"var checkout = randomDate(new Date(2012, 0, 1), new Date())\r",
+							"pm.collectionVariables.set(\"checkout\", checkout.toLocaleDateString()) //converting in only date\r",
+							"\r",
+							"// set addisional needs (10 charcaters)\r",
+							"pm.collectionVariables.set(\"additionalneeds\", random_name(10));\r",
+							"\r",
+							"//set an invalid token\r",
+							"var temp_token = pm.collectionVariables.get(\"token\"); //set an invalid token\r",
+							"temp_token = temp_token + \"!\"\r",
+							"pm.environment.set(\"token\", temp_token);\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "token = 38814a9b2788ea3",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"firstname\" : \"{{firstname}}\",\r\n    \"lastname\" : \"{{lastname}}\",\r\n    \"totalprice\" : {{totalprice}},\r\n    \"depositpaid\" : {{depositpaid}},\r\n    \"bookingdates\" : {\r\n        \"checkin\" : \"{{checkin}}\",\r\n        \"checkout\" : \"{{checkout}}\"\r\n    },\r\n    \"additionalneeds\" : \"{{additionalneeds}}\",\r\n    \"token\": \"{{token}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/booking/{{bookingID}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"booking",
+						"{{bookingID}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "token",
+			"value": "",
+			"disabled": true
+		},
+		{
+			"key": "firstname",
+			"value": ""
+		},
+		{
+			"key": "lastname",
+			"value": ""
+		},
+		{
+			"key": "totalprice",
+			"value": ""
+		},
+		{
+			"key": "depositpaid",
+			"value": ""
+		},
+		{
+			"key": "checkin",
+			"value": ""
+		},
+		{
+			"key": "checkout",
+			"value": ""
+		},
+		{
+			"key": "additionalneeds",
+			"value": ""
+		},
+		{
+			"key": "baseUrl",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "bookingID",
+			"value": ""
+		},
+		{
+			"key": "token",
+			"value": ""
+		}
+	]
+}
