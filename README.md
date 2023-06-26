@@ -14,7 +14,7 @@
 - Added different tests to verify API response is correct
 	
 ### How to run the Automation scripts
- - Import any script in Postman Software. 
+ - Import any Collection  in Postman Software. 
  - Run the collection.
  - Observe the summary.
  
