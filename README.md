@@ -19,7 +19,7 @@
  - Observe the summary.
  
  
- ### Screenshots
+ ### Videos / Screenshots
  <img src ="https://github.com/ashik53/Resources/blob/master/Potsman_Automation_script.gif" >
 
  
